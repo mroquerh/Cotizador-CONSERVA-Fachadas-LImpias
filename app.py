@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="FACHADAS LIMPIAS CONSERVA", page_icon="🛡️", layout="centered")
 
 # 2. Inyección de estilos visuales y etiquetas para el celular
-LOGOTIPO_EMPRESA_URL = "https://flaticon.com"
+LOGOTIPO_EMPRESA_URL = "https://i.postimg.cc/CK75HXjy/Logo-circular-de-Fachadas-Limpiasak_r.png"
 
 st.markdown(f"""
     <head>
