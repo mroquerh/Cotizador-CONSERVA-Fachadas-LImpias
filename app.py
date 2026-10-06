@@ -20,26 +20,44 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Encabezado corporativo
 st.title("🏢 SUPER LIMPIAS S.A.S.")
 st.subheader("Programa de Conservación 5 Años (60 Meses)")
 st.markdown("---")
 
-# Sección 1: Parámetros de Entrada
+# Inicialización de variables de sesión para el reinicio limpio
+if "edificio" not in st.session_state:
+    st.session_state.edificio = ""
+if "perimetro" not in st.session_state:
+    st.session_state.perimetro = 50.0
+if "altura" not in st.session_state:
+    st.session_state.altura = 15.0
+
+# Botón técnico para limpiar la simulación anterior
+if st.button("🧹 Limpiar y Nueva Cotización", use_container_width=True):
+    st.session_state.edificio = ""
+    st.session_state.perimetro = 50.0
+    st.session_state.altura = 15.0
+    st.rerun()
+
+st.markdown("---")
+
+# Sección 1: Parámetros de Entrada (Amarrados al estado de la sesión)
 st.markdown("### 📋 Parámetros de Inspección")
-nombre_edificio = st.text_input("Nombre de la Copropiedad:", "Edificio Cayena")
+nombre_edificio = st.text_input("Nombre de la Copropiedad:", key="edificio")
 
 col1, col2 = st.columns(2)
 with col1:
-    perimetro = st.number_input("Perímetro (Metros):", min_value=1.0, value=50.0, step=1.0)
+    perimetro = st.number_input("Perímetro (Metros):", min_value=1.0, step=1.0, key="perimetro")
 with col2:
-    altura = st.number_input("Altura / Pisos (Metros):", min_value=1.0, value=15.0, step=1.0)
+    altura = st.number_input("Altura / Pisos (Metros):", min_value=1.0, step=1.0, key="altura")
 
 tipo_fachada = st.selectbox(
     "Componente Constructivo Dominante:", 
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# CONSTANTES ACTUALIZADAS POR EL USUARIO
+# CONSTANTE DE PISO FINANCIERO
 BASE_MINIMA_FEE = 140000.0
 
 # Ingeniería matemática y financiera
@@ -50,7 +68,7 @@ mes_lavado_ciclo = 18 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 12
 costo_restauracion = area_bruta * tarifa_m2
 fee_calculado = (costo_restauracion * 0.05) / 12
 
-# Aplicación automática del nuevo Piso Financiero
+# Aplicación automática de la Base Mínima
 es_tarifa_minima = False
 if fee_calculado < BASE_MINIMA_FEE:
     fee_final = BASE_MINIMA_FEE
@@ -64,7 +82,7 @@ st.markdown("### 📊 Viabilidad Económica")
 
 if es_tarifa_minima:
     st.warning(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
-    st.caption("⚠️ *Nota: Se está aplicando la nueva Tarifa Mínima Base de \$140.000 COP para estructuras pequeñas.*")
+    st.caption("⚠️ *Nota: Se está aplicando la Tarifa Mínima Base de \$140.000 COP para estructuras pequeñas.*")
 else:
     st.success(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
     st.caption("Tarifa estándar calculada bajo el modelo del 5% anualizado.")
@@ -113,12 +131,13 @@ for anio in range(1, 6):
                 """, unsafe_allow_html=True)
 
 # Sección 3: Generación del Documento para Descarga
+nombre_seguro = nombre_edificio if nombre_edificio else "Nueva_Copropiedad"
 cronograma_completo_txt = f"""====================================================================
    PLAN DE CONSERVACIÓN PREVENTIVA A 5 AÑOS (60 MESES)
    SUPER LIMPIAS S.A.S. - PROPIEDAD HORIZONTAL COLOMBIA
 ====================================================================
 
-COPROPIEDAD: {nombre_edificio}
+COPROPIEDAD: {nombre_seguro}
 ÁREA DE FACHADA BRUTA: {area_bruta:,.2f} m2
 FEE MENSUAL ACORDADO: $ {fee_final:,.2f} COP / mes {"(Tarifa Minima Base)" if es_tarifa_minima else ""}
 DURACIÓN CONTRACTUAL: 60 Meses (5 Años)
@@ -141,8 +160,7 @@ st.markdown("---")
 st.download_button(
     label="📥 Guardar Reporte Maestro 60 Meses en el Celular",
     data=cronograma_completo_txt,
-    file_name=f"Plan_60_Meses_{nombre_edificio.replace(' ', '_')}.txt",
+    file_name=f"Plan_60_Meses_{nombre_seguro.replace(' ', '_')}.txt",
     mime="text/plain",
     use_container_width=True
 )
-
