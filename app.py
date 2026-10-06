@@ -1,12 +1,11 @@
 import streamlit as st
 from datetime import datetime, timedelta
 
-# 1. Configuración estética inicial con ícono de protección (Shield)
-st.set_page_config(page_title="SUPER LIMPIAS S.A.S.", page_icon="🛡️", layout="centered")
+# 1. Configuración estética de la pestaña del navegador
+st.set_page_config(page_title="FACHADAS LIMPIAS CONSERVA", page_icon="🛡️", layout="centered")
 
-# 2. INJECCIÓN DE LOGOTIPO CORPORATIVO PARA PANTALLA DE INICIO MÓVIL
-# Este bloque obliga al celular a usar tu logo en vez del de Streamlit al guardarlo en el escritorio
-LOGOTIPO_EMPRESA_URL = "https://flaticon.com" # Reemplaza por el URL de tu logo real
+# 2. Inyección de estilos visuales y etiquetas para el celular
+LOGOTIPO_EMPRESA_URL = "https://flaticon.com"
 
 st.markdown(f"""
     <head>
@@ -26,11 +25,19 @@ st.markdown(f"""
         color: #1E3A8A;
         font-weight: bold;
     }}
+    .subbrand-text {{
+        color: #555555;
+        font-size: 14px;
+        font-style: italic;
+        margin-top: -15px;
+        margin-bottom: 20px;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
-# Encabezado corporativo
-st.title("🛡️ SUPER LIMPIAS S.A.S.")
+# 3. Encabezado con tu nueva estructura de marca solicitada
+st.title("🏢 FACHADAS LIMPIAS CONSERVA")
+st.markdown('<p class="subbrand-text">SUPER LIMPIAS SAS / NIT 900.533.282-2</p>', unsafe_allow_html=True)
 st.subheader("Programa de Conservación 5 Años (60 Meses)")
 st.markdown("---")
 
@@ -66,7 +73,7 @@ tipo_fachada = st.selectbox(
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# CONSTANTE DE PISO FINANCIERO CRÍTICO
+# CONSTANTE DE PISO FINANCIERO ESTABLECIDA EN $140.000 COP
 BASE_MINIMA_FEE = 140000.0
 
 # Ingeniería matemática y financiera
@@ -123,7 +130,7 @@ for anio in range(1, 6):
         
         <div class="report-box" style="border-left-color: #EA4335;">
             <h5 class="title-box">🧗 BOLSA DE DESCUELGUES (2 por Semestre)</h5>
-            <p>• <b>Disponibilidad Controlada:</b> Acceso a un maximum de dos (2) descuelgues técnicos puntuales por semestre para sellado de fisuras críticas o emergencias.</p>
+            <p>• <b>Disponibilidad Controlada:</b> Acceso a un máximo de dos (2) descuelgues técnicos puntuales por semestre para sellado de fisuras críticas o emergencias.</p>
             <p>• <b>Condición Contractual:</b> Cupos semestrales estrictamente <u>no acumulables</u> para garantizar la ejecución preventiva continua.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -143,7 +150,8 @@ for anio in range(1, 6):
 nombre_seguro = nombre_edificio if nombre_edificio else "Nueva_Copropiedad"
 cronograma_completo_txt = f"""====================================================================
    PLAN DE CONSERVACIÓN PREVENTIVA A 5 AÑOS (60 MESES)
-   SUPER LIMPIAS S.A.S. - PROPIEDAD HORIZONTAL COLOMBIA
+   FACHADAS LIMPIAS CONSERVA — PROPIEDAD HORIZONTAL COLOMBIA
+   Soporte Corporativo: SUPER LIMPIAS SAS / NIT 900.533.282-2
 ====================================================================
 
 COPROPIEDAD: {nombre_seguro}
@@ -173,3 +181,4 @@ st.download_button(
     mime="text/plain",
     use_container_width=True
 )
+
