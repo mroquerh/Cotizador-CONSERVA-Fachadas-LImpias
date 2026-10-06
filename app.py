@@ -4,6 +4,22 @@ from datetime import datetime, timedelta
 # 1. Configuración de la pestaña
 st.set_page_config(page_title="FACHADAS LIMPIAS CONSERVA", page_icon="🛡️", layout="centered")
 
+# DICCIONARIO DE TRADUCCIÓN DE MESES (Blindaje 100% Español)
+MESES_ES = {
+    "January": "Enero", "February": "Febrero", "March": "Marzo", 
+    "April": "Abril", "May": "Mayo", "June": "Junio", 
+    "July": "Julio", "August": "Agosto", "September": "Septiembre", 
+    "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
+}
+
+def formatear_fecha_es(fecha):
+    mes_en = fecha.strftime('%B')
+    mes_es = MESES_ES.get(mes_en, mes_en)
+    return f"{mes_es.upper()} {fecha.strftime('%Y')}"
+
+def formatear_fecha_corta(fecha):
+    return fecha.strftime('%m/%Y')
+
 # 2. Estilos visuales corporativos
 LOGOTIPO_EMPRESA_URL = "https://flaticon.com"
 
@@ -50,7 +66,7 @@ if "altura" not in st.session_state:
     st.session_state.altura = 15.0
 
 # Botón de limpieza
-if st.button("%" " 🧹 Limpiar y Nueva Cotización", use_container_width=True):
+if st.button("🧹 Limpiar y Nueva Cotización", use_container_width=True):
     st.session_state.edificio = ""
     st.session_state.perimetro = 50.0
     st.session_state.altura = 15.0
@@ -73,7 +89,7 @@ tipo_fachada = st.selectbox(
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# NUEVA HERRAMIENTA: Porcentaje variable de ajuste comercial sobre la tarifa final
+# Selector de ajuste comercial flexible
 ajuste_comercial = st.slider(
     "⚙️ Ajuste de Negociación Flexible (% sobre la tarifa):", 
     min_value=-6.0, 
@@ -94,7 +110,7 @@ mes_lavado_ciclo = 18 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 12
 costo_restauracion = area_bruta * tarifa_m2
 fee_calculado = (costo_restauracion * 0.05) / 12
 
-# Aplicación automática de la Base Mínima de la empresa
+# Aplicación automática de la Base Mínima
 es_tarifa_minima = False
 if fee_calculado < BASE_MINIMA_FEE:
     fee_base_ejercicio = BASE_MINIMA_FEE
@@ -102,7 +118,7 @@ if fee_calculado < BASE_MINIMA_FEE:
 else:
     fee_base_ejercicio = fee_calculado
 
-# Aplicación del porcentaje variable de ajuste de negociación elegido en el slider
+# Aplicación del porcentaje variable de ajuste de negociación
 impacto_ajuste = fee_base_ejercicio * (ajuste_comercial / 100)
 fee_final = fee_base_ejercicio + impacto_ajuste
 
@@ -139,13 +155,13 @@ for anio in range(1, 6):
         
         st.markdown(f"""
         <div class="report-box" style="border-left-color: #4285F4;">
-            <h5 class="title-box">📸 MES {(anio-1)*12 + 3} — {f_dron.strftime('%B %Y').upper()}</h5>
+            <h5 class="title-box">📸 MES {(anio-1)*12 + 3} — {formatear_fecha_es(f_dron)}</h5>
             <p>• <b>Monitoreo con Dron:</b> Mapeo fotográfico de alta resolución para detección temprana de fisuras y fallas en sellos.</p>
             <p>• <b>Entregable:</b> Reporte de Salud de Fachada para el Consejo de Administración.</p>
         </div>
         
         <div class="report-box" style="border-left-color: #FFBB00;">
-            <h5 class="title-box">💧 MES {(anio-1)*12 + 6} — {f_bajantes.strftime('%B %Y').upper()}</h5>
+            <h5 class="title-box">💧 MES {(anio-1)*12 + 6} — {formatear_fecha_es(f_bajantes)}</h5>
             <p>• <b>Control Hidráulico:</b> Sondeo mecánico, limpieza profunda y desatasco de bajantes críticas de aguas lluvias.</p>
         </div>
         
@@ -162,7 +178,7 @@ for anio in range(1, 6):
                 f_lavado = fecha_inicio + timedelta(days=m * 30)
                 st.markdown(f"""
                 <div class="report-box" style="border-left-color: #28A745;">
-                    <h5 class="title-box">🧼 MES {m} — {f_lavado.strftime('%B %Y').upper()} | Hito Estético</h5>
+                    <h5 class="title-box">🧼 MES {m} — {formatear_fecha_es(f_lavado)} | Hito Estético</h5>
                     <p>• <b>Lavado Parcial Programado:</b> Limpieza mecánica a presión con detergentes neutros en las zonas con mayor exposición a la contaminación.</p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -204,4 +220,3 @@ st.download_button(
     mime="text/plain",
     use_container_width=True
 )
-
