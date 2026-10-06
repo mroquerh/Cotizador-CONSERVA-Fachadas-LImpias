@@ -1,11 +1,11 @@
 import streamlit as st
 from datetime import datetime, timedelta
 
-# 1. Configuración estética de la pestaña del navegador
+# 1. Configuración de la pestaña
 st.set_page_config(page_title="FACHADAS LIMPIAS CONSERVA", page_icon="🛡️", layout="centered")
 
-# 2. Inyección de estilos visuales y etiquetas para el celular
-LOGOTIPO_EMPRESA_URL = "https://i.postimg.cc/CK75HXjy/Logo-circular-de-Fachadas-Limpiasak_r.png"
+# 2. Estilos visuales corporativos
+LOGOTIPO_EMPRESA_URL = "https://flaticon.com"
 
 st.markdown(f"""
     <head>
@@ -35,13 +35,13 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Encabezado con tu nueva estructura de marca solicitada
+# 3. Encabezado de Marca
 st.title("🏢 FACHADAS LIMPIAS CONSERVA")
 st.markdown('<p class="subbrand-text">SUPER LIMPIAS SAS / NIT 900.533.282-2</p>', unsafe_allow_html=True)
 st.subheader("Programa de Conservación 5 Años (60 Meses)")
 st.markdown("---")
 
-# Inicialización de variables de sesión para el reinicio limpio
+# Inicialización de variables de sesión
 if "edificio" not in st.session_state:
     st.session_state.edificio = ""
 if "perimetro" not in st.session_state:
@@ -49,8 +49,8 @@ if "perimetro" not in st.session_state:
 if "altura" not in st.session_state:
     st.session_state.altura = 15.0
 
-# Botón técnico para limpiar la simulación anterior
-if st.button("🧹 Limpiar y Nueva Cotización", use_container_width=True):
+# Botón de limpieza
+if st.button("%" " 🧹 Limpiar y Nueva Cotización", use_container_width=True):
     st.session_state.edificio = ""
     st.session_state.perimetro = 50.0
     st.session_state.altura = 15.0
@@ -73,10 +73,20 @@ tipo_fachada = st.selectbox(
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# CONSTANTE DE PISO FINANCIERO ESTABLECIDA EN $140.000 COP
+# NUEVA HERRAMIENTA: Porcentaje variable de ajuste comercial sobre la tarifa final
+ajuste_comercial = st.slider(
+    "⚙️ Ajuste de Negociación Flexible (% sobre la tarifa):", 
+    min_value=-6.0, 
+    max_value=6.0, 
+    value=0.0, 
+    step=0.5,
+    help="Valores negativos aplican descuento por volumen o cercanía. Valores positivos cubren riesgos logísticos o complejidad."
+)
+
+# CONSTANTE DE PISO FINANCIERO CONTROLADO
 BASE_MINIMA_FEE = 140000.0
 
-# Ingeniería matemática y financiera
+# Ingeniería matemática y financiera dinámica
 area_bruta = perimetro * altura
 tarifa_m2 = 35000 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 14000
 mes_lavado_ciclo = 18 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 12
@@ -84,24 +94,35 @@ mes_lavado_ciclo = 18 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 12
 costo_restauracion = area_bruta * tarifa_m2
 fee_calculado = (costo_restauracion * 0.05) / 12
 
-# Aplicación automática de la Base Mínima
+# Aplicación automática de la Base Mínima de la empresa
 es_tarifa_minima = False
 if fee_calculado < BASE_MINIMA_FEE:
-    fee_final = BASE_MINIMA_FEE
+    fee_base_ejercicio = BASE_MINIMA_FEE
     es_tarifa_minima = True
 else:
-    fee_final = fee_calculado
+    fee_base_ejercicio = fee_calculado
+
+# Aplicación del porcentaje variable de ajuste de negociación elegido en el slider
+impacto_ajuste = fee_base_ejercicio * (ajuste_comercial / 100)
+fee_final = fee_base_ejercicio + impacto_ajuste
 
 # Resultados en pantalla
 st.markdown("---")
-st.markdown("### 📊 Viabilidad Económica")
+st.markdown("### 📊 Viabilidad Económica Dinámica")
 
-if es_tarifa_minima:
-    st.warning(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
-    st.caption("⚠️ *Nota: Se está aplicando la Tarifa Mínima Base de \$140.000 COP para estructuras pequeñas.*")
+st.markdown(f"""
+<div class="report-box" style="border-left-color: #1E3A8A; background-color: #EFF6FF;">
+    <p><b>Fee Técnico Base del Ejercicio:</b> $ {fee_base_ejercicio:,.2f} COP / mes {'(Tarifa Mínima)' if es_tarifa_minima else ''}</p>
+    <p><b>Ajuste de Negociación Aplicado:</b> {ajuste_comercial}% ($ {impacto_ajuste:,.2f} COP)</p>
+</div>
+""", unsafe_allow_html=True)
+
+if ajuste_comercial < 0:
+    st.success(f"### 💰 FEE FINAL CON DESCUENTO: $ {fee_final:,.2f} COP / mes")
+elif ajuste_comercial > 0:
+    st.warning(f"### 💰 FEE FINAL CON MARGEN: $ {fee_final:,.2f} COP / mes")
 else:
-    st.success(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
-    st.caption("Tarifa estándar calculada bajo el modelo del 5% anualizado.")
+    st.info(f"### 💰 FEE FINAL ESTÁNDAR: $ {fee_final:,.2f} COP / mes")
 
 st.caption("Contrato a término de 60 meses. Valores netos sin AIU. Reajustable con el IPC anual.")
 
@@ -156,7 +177,9 @@ cronograma_completo_txt = f"""==================================================
 
 COPROPIEDAD: {nombre_seguro}
 ÁREA DE FACHADA BRUTA: {area_bruta:,.2f} m2
-FEE MENSUAL ACORDADO: $ {fee_final:,.2f} COP / mes {"(Tarifa Minima Base)" if es_tarifa_minima else ""}
+FEE TÉCNICO BASE: $ {fee_base_ejercicio:,.2f} COP / mes
+AJUSTE DE NEGOCIACIÓN APLICADO: {ajuste_comercial}%
+FEE MENSUAL ACORDADO FINAL: $ {fee_final:,.2f} COP / mes
 DURACIÓN CONTRACTUAL: 60 Meses (5 Años)
 
 --------------------------------------------------------------------
