@@ -39,28 +39,44 @@ tipo_fachada = st.selectbox(
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# Lógica matemática y financiera
+# CONSTANTES ACTUALIZADAS POR EL USUARIO
+BASE_MINIMA_FEE = 140000.0
+
+# Ingeniería matemática y financiera
 area_bruta = perimetro * altura
 tarifa_m2 = 35000 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 14000
 mes_lavado_ciclo = 18 if tipo_fachada == "Mixta (Ladrillo/Pintura)" else 12
 
 costo_restauracion = area_bruta * tarifa_m2
-fee_mensual = (costo_restauracion * 0.05) / 12
+fee_calculado = (costo_restauracion * 0.05) / 12
+
+# Aplicación automática del nuevo Piso Financiero
+es_tarifa_minima = False
+if fee_calculado < BASE_MINIMA_FEE:
+    fee_final = BASE_MINIMA_FEE
+    es_tarifa_minima = True
+else:
+    fee_final = fee_calculado
 
 # Resultados en pantalla
 st.markdown("---")
 st.markdown("### 📊 Viabilidad Económica")
-st.success(f"### 💰 FEE RECURRENTE: $ {fee_mensual:,.2f} COP / mes")
-st.caption("Contrato a término de 60 meses. Valores netos sin AIU.")
+
+if es_tarifa_minima:
+    st.warning(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
+    st.caption("⚠️ *Nota: Se está aplicando la nueva Tarifa Mínima Base de \$140.000 COP para estructuras pequeñas.*")
+else:
+    st.success(f"### 💰 FEE RECURRENTE: $ {fee_final:,.2f} COP / mes")
+    st.caption("Tarifa estándar calculada bajo el modelo del 5% anualizado.")
+
+st.caption("Contrato a término de 60 meses. Valores netos sin AIU. Reajustable con el IPC anual.")
 
 # Sección 2: Cronograma Visual de 5 Años
 st.markdown("---")
 st.markdown("### 📅 Cronograma Maestro Corporativo (60 Meses)")
-st.markdown("Despliegue cada año para revisar las actividades programadas frente al cliente:")
 
 fecha_inicio = datetime.now()
 
-# Ciclo de años
 for anio in range(1, 6):
     with st.expander(f"📅 AÑO {anio} (Meses {(anio-1)*12 + 1} al {anio*12})"):
         f_dron = fecha_inicio + timedelta(days=365 * (anio - 1) + 90)
@@ -79,12 +95,12 @@ for anio in range(1, 6):
         </div>
         
         <div class="report-box" style="border-left-color: #EA4335;">
-            <h5 class="title-box">🧗 DISPONIBILIDAD DE DESCUELGUES (Anual)</h5>
-            <p>• <b>Bolsa de Horas Técnicas:</b> Cuadrilla certificada en alturas disponible para intervenciones puntuales de sellamiento de fisuras o juntas críticas reportadas por el dron o por emergencias de filtración.</p>
+            <h5 class="title-box">🧗 BOLSA DE DESCUELGUES (2 por Semestre)</h5>
+            <p>• <b>Disponibilidad Controlada:</b> Acceso a un máximo de dos (2) descuelgues técnicos puntuales por semestre para sellado de fisuras críticas o emergencias.</p>
+            <p>• <b>Condición Contractual:</b> Cupos semestrales estrictamente <u>no acumulables</u> para garantizar la ejecución preventiva continua.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Lógica de lavados recurrentes cada 18 meses (para mixtas) o 12 meses (tecnológicas)
         meses_totales_anio = list(range((anio-1)*12 + 1, anio*12 + 1))
         for m in meses_totales_anio:
             if m % mes_lavado_ciclo == 0:
@@ -92,7 +108,7 @@ for anio in range(1, 6):
                 st.markdown(f"""
                 <div class="report-box" style="border-left-color: #28A745;">
                     <h5 class="title-box">🧼 MES {m} — {f_lavado.strftime('%B %Y').upper()} | Hito Estético</h5>
-                    <p>• <b>Lavado Parcial Programado:</b> Limpieza mecánica a presión con detergentes neutros en las zonas con mayor exposición a la contaminación, polución y humedad.</p>
+                    <p>• <b>Lavado Parcial Programado:</b> Limpieza mecánica a presión con detergentes neutros en las zonas con mayor exposición a la contaminación.</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -104,20 +120,18 @@ cronograma_completo_txt = f"""==================================================
 
 COPROPIEDAD: {nombre_edificio}
 ÁREA DE FACHADA BRUTA: {area_bruta:,.2f} m2
-FEE MENSUAL ACORDADO: $ {fee_mensual:,.2f} COP / mes
+FEE MENSUAL ACORDADO: $ {fee_final:,.2f} COP / mes {"(Tarifa Minima Base)" if es_tarifa_minima else ""}
 DURACIÓN CONTRACTUAL: 60 Meses (5 Años)
 
 --------------------------------------------------------------------
 MATRIZ RECURRENTE DE ALCANCES Y HITOS TÉCNICOS:
 --------------------------------------------------------------------
-1. MONITOREO AVANZADO (Cada 12 meses): Inspección visual gráfica con Dron 
-   y entrega de Reporte de Salud al Consejo de Administración.
-2. CONTROL HIDRÁULICO (Cada 12 meses): Sondeo, limpieza y desatasco técnico 
-   de bajantes de aguas lluvias.
-3. BOLSA DE DESCUELGUES EN DISPONIBILIDAD: Acceso prioritario a cuadrillas 
-   en alturas para sellado puntual de fisuras ante reportes o emergencias.
+1. MONITOREO AVANZADO (Cada 12 meses): Inspección visual gráfica con Dron.
+2. CONTROL HIDRÁULICO (Cada 12 meses): Sondeo, limpieza y desatasco de bajantes.
+3. BOLSA DE DESCUELGUES DE MITIGACIÓN: Disponibilidad de hasta dos (2) descuelgues 
+   técnicos por semestre. Cupos NO acumulables entre periodos.
 4. LAVADO PARCIAL PROGRAMADO (Cada {mes_lavado_ciclo} meses): Limpieza mecánica focalizada 
-   de las zonas de alta exposición a hollín y hongos (Zonas críticas).
+   de zonas críticas de alta exposición.
 
 --------------------------------------------------------------------
 DOCUMENTO EMITIDO POR SUPER LIMPIAS S.A.S. — BOGOTÁ, COLOMBIA
