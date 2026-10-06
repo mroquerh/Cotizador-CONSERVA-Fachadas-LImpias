@@ -1,27 +1,36 @@
 import streamlit as st
 from datetime import datetime, timedelta
 
-# Configuración estética de la aplicación móvil
-st.set_page_config(page_title="SUPER LIMPIAS S.A.S.", page_icon="🏢", layout="centered")
+# 1. Configuración estética inicial con ícono de protección (Shield)
+st.set_page_config(page_title="SUPER LIMPIAS S.A.S.", page_icon="🛡️", layout="centered")
 
-st.markdown("""
+# 2. INJECCIÓN DE LOGOTIPO CORPORATIVO PARA PANTALLA DE INICIO MÓVIL
+# Este bloque obliga al celular a usar tu logo en vez del de Streamlit al guardarlo en el escritorio
+LOGOTIPO_EMPRESA_URL = "https://flaticon.com" # Reemplaza por el URL de tu logo real
+
+st.markdown(f"""
+    <head>
+        <link rel="apple-touch-icon" href="{LOGOTIPO_EMPRESA_URL}">
+        <link rel="icon" type="image/png" href="{LOGOTIPO_EMPRESA_URL}">
+        <meta name="apple-mobile-web-app-image" content="{LOGOTIPO_EMPRESA_URL}">
+    </head>
     <style>
-    .report-box {
+    .report-box {{
         background-color: #F8F9FA;
         padding: 15px;
         border-radius: 10px;
         border-left: 5px solid #28A745;
         margin-bottom: 15px;
-    }
-    .title-box {
+    }}
+    .title-box {{
         color: #1E3A8A;
         font-weight: bold;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
 # Encabezado corporativo
-st.title("🏢 SUPER LIMPIAS S.A.S.")
+st.title("🛡️ SUPER LIMPIAS S.A.S.")
 st.subheader("Programa de Conservación 5 Años (60 Meses)")
 st.markdown("---")
 
@@ -42,7 +51,7 @@ if st.button("🧹 Limpiar y Nueva Cotización", use_container_width=True):
 
 st.markdown("---")
 
-# Sección 1: Parámetros de Entrada (Amarrados al estado de la sesión)
+# Sección 1: Parámetros de Entrada
 st.markdown("### 📋 Parámetros de Inspección")
 nombre_edificio = st.text_input("Nombre de la Copropiedad:", key="edificio")
 
@@ -57,7 +66,7 @@ tipo_fachada = st.selectbox(
     ["Mixta (Ladrillo/Pintura)", "Tecnológica (Vidrio/Alucobond)"]
 )
 
-# CONSTANTE DE PISO FINANCIERO
+# CONSTANTE DE PISO FINANCIERO CRÍTICO
 BASE_MINIMA_FEE = 140000.0
 
 # Ingeniería matemática y financiera
@@ -114,7 +123,7 @@ for anio in range(1, 6):
         
         <div class="report-box" style="border-left-color: #EA4335;">
             <h5 class="title-box">🧗 BOLSA DE DESCUELGUES (2 por Semestre)</h5>
-            <p>• <b>Disponibilidad Controlada:</b> Acceso a un máximo de dos (2) descuelgues técnicos puntuales por semestre para sellado de fisuras críticas o emergencias.</p>
+            <p>• <b>Disponibilidad Controlada:</b> Acceso a un maximum de dos (2) descuelgues técnicos puntuales por semestre para sellado de fisuras críticas o emergencias.</p>
             <p>• <b>Condición Contractual:</b> Cupos semestrales estrictamente <u>no acumulables</u> para garantizar la ejecución preventiva continua.</p>
         </div>
         """, unsafe_allow_html=True)
